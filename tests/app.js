@@ -9,7 +9,7 @@ describe("Welcome to CI/CD Server", function() {
     it("returns status code 200", function(done) {
       request.get(base_url, function(error, response, body) {
         assert.equal(200, response.statusCode);
-        //helloWorld.close();
+        helloWorld.close();
         done();
       });
     });
@@ -20,6 +20,7 @@ describe("Welcome to CI/CD Server", function() {
       var res = helloWorld.welcomeMessage();
       var message = "Welcome to CI/CD 101 using CircleCI!";
       assert.equal(res, message);
+      done();
     });  
   });
 }); 
