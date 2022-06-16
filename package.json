@@ -4,8 +4,9 @@
   "description": "CircleCi pipeline",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1" ,
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha tests --timeout 4000 --reporter mochawesome --reportdir=test-results --reportfilename=test-results --exit",
+    "coverage": "nyc --reporter=html --reporter=text  npm run test"
   },
   "author": "Narendra",
   "license": "ISC",
