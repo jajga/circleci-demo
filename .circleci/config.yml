@@ -46,20 +46,32 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
       - setup_remote_docker:
           docker_layer_caching: false
+      # - run:
+      #     name: Build Docker image
+      #     command: |
+      #       aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
+      #       export TAG=0.2.<< pipeline.number >>
+      #       export IMAGE_NAME=circleci-demo
+      #       docker build -t circleci-demo .
+      #       docker tag circleci-demo:latest 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
+      #       docker push 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
       - run:
-          name: Build Docker image
+          name: Setup common environment variables
           command: |
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
-            export TAG=0.2.<< pipeline.number >>
-            export IMAGE_NAME=circleci-demo
-            docker build -t circleci-demo .
-            docker tag circleci-demo:latest 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
-            docker push 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
-      - aws-ecs/run-task:
-          awsvpc: false
-          cluster: DemoAppCluster
-          launch-type: EC2
-          task-definition: CircleCi                          
+            echo 'export ECS_CLUSTER_NAME="${AWS_RESOURCE_NAME_PREFIX}-cluster"' >> $BASH_ENV
+            echo 'export ECS_SERVICE_NAME="${AWS_RESOURCE_NAME_PREFIX}-service"' >> $BASH_ENV
+            echo 'export FULL_IMAGE_NAME="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_RESOURCE_NAME_PREFIX}:${CIRCLE_SHA1}"' >> $BASH_ENV
+      - run:
+          name: Push image
+          command: |
+            eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+            docker push $FULL_IMAGE_NAME
+      - aws-ecs/update-service:
+          family: "${ECS_SERVICE_NAME}"
+          cluster-name: "${ECS_CLUSTER_NAME}"
+          container-image-name-updates: "container=${ECS_SERVICE_NAME},image-and-tag=${FULL_IMAGE_NAME}"
+          container-env-var-updates: "container=${ECS_SERVICE_NAME},name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=${ECS_SERVICE_NAME},name=BUILD_DATE,value=\"$(date)\""
+          verify-revision-is-deployed: true                          
 workflows:
   build_test:
     jobs:
