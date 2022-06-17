@@ -81,12 +81,16 @@ jobs:
           command: |
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
             docker push $FULL_IMAGE_NAME
-      - aws-ecs/update-service:
-          family: "${ECS_SERVICE_NAME}"
-          cluster-name: "${ECS_CLUSTER_NAME}"
-          container-image-name-updates: "container=${ECS_SERVICE_NAME},image-and-tag=${FULL_IMAGE_NAME}"
-          container-env-var-updates: "container=${ECS_SERVICE_NAME},name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=${ECS_SERVICE_NAME},name=BUILD_DATE,value=\"$(date)\""
-          verify-revision-is-deployed: true                          
+      # - aws-ecs/update-service:
+      #     family: "${ECS_SERVICE_NAME}"
+      #     cluster-name: "${ECS_CLUSTER_NAME}"
+      #     container-image-name-updates: "container=${ECS_SERVICE_NAME},image-and-tag=${FULL_IMAGE_NAME}"
+      #     container-env-var-updates: "container=${ECS_SERVICE_NAME},name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=${ECS_SERVICE_NAME},name=BUILD_DATE,value=\"$(date)\""
+      #     verify-revision-is-deployed: true
+      - aws-ecs/deploy-service-update:
+          cluster-name: '${AWS_RESOURCE_NAME_PREFIX}-cluster'
+          container-image-name-updates: 'container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}'
+          family: '${AWS_RESOURCE_NAME_PREFIX}-service'                          
 workflows:
   build_test:
     jobs:
