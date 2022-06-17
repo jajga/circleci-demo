@@ -35,26 +35,6 @@ jobs:
   #           docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
   #           echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
   #           docker push $DOCKER_LOGIN/$IMAGE_NAME
-  # build_docker_image:
-  #   docker:
-  #     - image: circleci/node:12
-  #   steps:
-  #     - checkout
-  #     - aws-cli/install
-  #     - aws-cli/setup:
-  #         aws-access-key-id: AWS_ACCESS_KEY_ID 
-  #         aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-  #     - setup_remote_docker:
-  #         docker_layer_caching: false
-  #     - run:
-  #         name: Build Docker image
-  #         command: |
-  #           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
-  #           export TAG=0.2.<< pipeline.number >>
-  #           export IMAGE_NAME=circleci-demo
-  #           docker build -t circleci-demo .
-  #           docker tag circleci-demo:latest 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
-  #           docker push 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
   build_docker_image:
     docker:
       - image: circleci/node:12
@@ -63,12 +43,27 @@ jobs:
       - aws-cli/install
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID 
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY      
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run:
+          name: Build Docker image
+          command: |
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
+            export TAG=0.2.<< pipeline.number >>
+            export IMAGE_NAME=circleci-demo
+            docker build -t circleci-demo .
+            docker tag circleci-demo:latest 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
+            docker push 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
+  run-task:
+    docker:
+      - image: 'cimg/python:3.9.1'
+    steps:
       - aws-ecs/run-task:
           awsvpc: false
           cluster: DemoAppCluster
           launch-type: EC2
-          task-definition: CircleCi             
+          task-definition: CircleCi                     
 workflows:
   build_test:
     jobs:
@@ -76,6 +71,9 @@ workflows:
       - build_docker_image:
           requires:
             - run_tests
+      - run-task:
+        requires:
+            - build_docker_image      
       # - gke_create_cluster
       # - gke_deploy_app:
       #     requires:
