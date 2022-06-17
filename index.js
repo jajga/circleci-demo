@@ -17,7 +17,7 @@ app.get('/', function (req,res) {
 });
 
 app.get('/test', function (req,res) {
-    res.status(200).send({resCode:1,msg:'Hello world'})
+    res.status(200).send({resCode:1,msg:'Hello world 2'})
 });
 
 app.get('/test2', function (req,res) {
