@@ -13,7 +13,7 @@ function welcomeMessage(){
 }
 
 app.get('/', function (req,res) {
-    res.status(200).send({resCode:1})
+    res.status(200).send('Hello World!')
 });
 
 app.get('/test', function (req,res) {
