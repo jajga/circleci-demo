@@ -72,7 +72,7 @@ workflows:
           requires:
             - run_tests
       - run-task:
-        requires:
+          requires:
             - build_docker_image      
       # - gke_create_cluster
       # - gke_deploy_app:
