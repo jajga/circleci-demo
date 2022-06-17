@@ -34,7 +34,7 @@ workflows:
   build_test:
     jobs:
       - run_tests
-      - build_docker_image
+      - build_docker_image:
           requires:
             - run_tests
       # - gke_create_cluster
