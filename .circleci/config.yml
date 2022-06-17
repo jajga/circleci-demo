@@ -59,6 +59,10 @@ jobs:
     docker:
       - image: circleci/node:12
     steps:
+      - aws-cli/install
+      - aws-cli/setup:
+        aws-access-key-id: AWS_ACCESS_KEY_ID 
+        aws-secret-access-key: AWS_SECRET_ACCESS_KEY      
       - aws-ecs/run-task:
           awsvpc: false
           cluster: DemoAppCluster
