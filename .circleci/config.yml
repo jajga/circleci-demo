@@ -69,7 +69,7 @@ jobs:
           command: |
             docker run -d -p 3000:3000 --name built-image $FULL_IMAGE_NAME
             sleep 10
-            docker run --network container:built-image appropriate/curl --retry 10 --retry-connrefused http://localhost:8080 | grep "Hello World!"
+            docker run --network container:built-image appropriate/curl --retry 10 --retry-connrefused http://localhost:3000 | grep "Hello World!"
       - run:
           name: Setup common environment variables
           command: |
