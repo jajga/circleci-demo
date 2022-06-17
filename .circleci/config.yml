@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
   aws-ecr: circleci/aws-ecr@2.0
-  aws-ecs: circleci/aws-ecs@2.0
+  aws-ecs: circleci/aws-ecs@2.3.0
 jobs:
   run_tests:
     docker:
@@ -88,7 +88,7 @@ jobs:
       #     container-env-var-updates: "container=${ECS_SERVICE_NAME},name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=${ECS_SERVICE_NAME},name=BUILD_DATE,value=\"$(date)\""
       #     verify-revision-is-deployed: true
       - aws-ecs/update-service:
-          cluster-name: 'DemoAppClusterUpdate'
+          cluster-name: 'DemoAppCluster'
           container-image-name-updates: 'container=Circlecidemo,tag=${CIRCLE_SHA1}'
           family: 'Circlecidemo'                          
 workflows:
