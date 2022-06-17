@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
 jobs:
   run_tests:
     docker:
@@ -15,21 +17,39 @@ jobs:
             npm run test 
       - store_test_results:
           path: mochawesome-report
+  # build_docker_image:
+  #   docker:
+  #     - image: circleci/node:12
+  #   steps:
+  #     - checkout
+  #     - aws-cli/install
+  #     - setup_remote_docker:
+  #         docker_layer_caching: false
+  #     - run:
+  #         name: Build Docker image
+  #         command: |
+  #           export TAG=0.2.<< pipeline.number >>
+  #           export IMAGE_NAME=$CIRCLE_PROJECT_REPONAME
+  #           docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
+  #           echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+  #           docker push $DOCKER_LOGIN/$IMAGE_NAME
   build_docker_image:
     docker:
       - image: circleci/node:12
     steps:
       - checkout
+      - aws-cli/install
       - setup_remote_docker:
           docker_layer_caching: false
       - run:
           name: Build Docker image
           command: |
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
             export TAG=0.2.<< pipeline.number >>
-            export IMAGE_NAME=$CIRCLE_PROJECT_REPONAME
-            docker build -t $DOCKER_LOGIN/$IMAGE_NAME -t $DOCKER_LOGIN/$IMAGE_NAME:$TAG .
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push $DOCKER_LOGIN/$IMAGE_NAME
+            export IMAGE_NAME=circleci-demo
+            docker build -t 902513218701.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:$TAG .
+            docker tag circleci-demo:latest 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
+            docker push 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest         
 workflows:
   build_test:
     jobs:
