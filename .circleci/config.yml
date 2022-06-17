@@ -61,20 +61,11 @@ jobs:
     steps:
       - checkout
       - aws-cli/install
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID 
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - aws-ecr/build-and-push-image:
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
-          tag: "${CIRCLE_SHA1}"
-      - aws-ecs/deploy-service-update:
-          requires:
-            - aws-ecr/build-and-push-image # only run this job once aws-ecr/build-and-push-image has completed
-          family: "${AWS_RESOURCE_NAME_PREFIX}-service"
-          cluster-name: "${AWS_RESOURCE_NAME_PREFIX}-cluster"
-          container-image-name-updates: "container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}"               
+      - aws-ecs/run-task:
+          awsvpc: false
+          cluster: DemoAppCluster
+          launch-type: EC2
+          task-definition: CircleCi              
 workflows:
   build_test:
     jobs:
