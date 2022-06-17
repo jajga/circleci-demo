@@ -40,8 +40,8 @@ jobs:
       - checkout
       - aws-cli/install
       - aws-cli/setup:
-          aws-access-key-id: AKIA5EIP22SG76YAFFXX 
-          aws-secret-access-key: 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
+          aws-access-key-id: AWS_ACCESS_KEY_ID 
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
       - setup_remote_docker:
           docker_layer_caching: false
       - run:
