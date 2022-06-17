@@ -50,7 +50,7 @@ jobs:
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
             export TAG=0.2.<< pipeline.number >>
             export IMAGE_NAME=circleci-demo
-            docker build -t 902513218701.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:$TAG .
+            docker build -t circleci-demo .
             docker tag circleci-demo:latest 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest
             docker push 902513218701.dkr.ecr.us-east-1.amazonaws.com/circleci-demo:latest         
 workflows:
