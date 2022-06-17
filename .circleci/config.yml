@@ -88,9 +88,9 @@ jobs:
       #     container-env-var-updates: "container=${ECS_SERVICE_NAME},name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=${ECS_SERVICE_NAME},name=BUILD_DATE,value=\"$(date)\""
       #     verify-revision-is-deployed: true
       - aws-ecs/update-service:
-          cluster-name: '${AWS_RESOURCE_NAME_PREFIX}-cluster'
-          container-image-name-updates: 'container=${AWS_RESOURCE_NAME_PREFIX}-service,tag=${CIRCLE_SHA1}'
-          family: '${AWS_RESOURCE_NAME_PREFIX}-service'                          
+          cluster-name: 'DemoAppClusterUpdate'
+          container-image-name-updates: 'container=Circlecidemo,tag=${CIRCLE_SHA1}'
+          family: 'Circlecidemo'                          
 workflows:
   build_test:
     jobs:
