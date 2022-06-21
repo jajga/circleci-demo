@@ -85,7 +85,7 @@ jobs:
           family: "CircleCi"
           cluster-name: "DemoAppCluster"
           container-image-name-updates: "container=CircleCi,image-and-tag=${FULL_IMAGE_NAME}"
-          container-env-var-updates: "container=CircleCi,name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=Circleciservice,name=BUILD_DATE,value=\"$(date)\""
+          container-env-var-updates: "container=CircleCi,name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=CircleCi,name=BUILD_DATE,value=\"$(date)\""
           verify-revision-is-deployed: true
       # - aws-ecs/update-service:
       #     cluster-name: "DemoAppCluster"
