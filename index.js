@@ -21,7 +21,7 @@ app.get('/test', function (req,res) {
 });
 
 app.get('/test2', function (req,res) {
-    res.status(200).send({resCode:1,msg:'Hello world 11'})
+    res.status(200).send({resCode:1,msg:'Hello world 12'})
 });
 
 
