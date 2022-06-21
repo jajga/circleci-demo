@@ -82,7 +82,7 @@ jobs:
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 902513218701.dkr.ecr.us-east-1.amazonaws.com
             docker push $FULL_IMAGE_NAME
       - aws-ecs/update-service:
-          family: "Circleciservice"
+          family: "CircleCi"
           cluster-name: "DemoAppCluster"
           container-image-name-updates: "container=Circlecidemo,image-and-tag=${FULL_IMAGE_NAME}"
           container-env-var-updates: "container=Circlecidemo,name=VERSION_INFO,value=${CIRCLE_SHA1}_${CIRCLE_BUILD_NUM},container=Circlecidemo,name=BUILD_DATE,value=\"$(date)\""
